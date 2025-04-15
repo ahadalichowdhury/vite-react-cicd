@@ -18,7 +18,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/vite-react:latest
+          IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/vite-testing:latest
           docker build -t $IMAGE_NAME .
           docker push $IMAGE_NAME
 
@@ -35,8 +35,8 @@ jobs:
       - name: Deploy to EC2 (Pull Image & Run)
         run: |
           ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            docker pull ${{ secrets.DOCKER_USERNAME }}/vite-react:latest
-            docker stop vite-react || true
-            docker rm vite-react || true
-            docker run -d --name vite-react -p 80:5173 ${{ secrets.DOCKER_USERNAME }}/vite-react:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/vite-testing:latest
+            docker stop vite-testing || true
+            docker rm vite-testing || true
+            docker run -d --name vite-testing -p 80:5173 ${{ secrets.DOCKER_USERNAME }}/vite-testing:latest
           EOF

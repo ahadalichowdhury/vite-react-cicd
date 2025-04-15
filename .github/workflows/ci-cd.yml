@@ -38,5 +38,5 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/vite-testing:latest
             docker stop vite-testing || true
             docker rm vite-testing || true
-            docker run -d --name vite-testing -p 80:5173 ${{ secrets.DOCKER_USERNAME }}/vite-testing:latest
+            docker run -d --name vite-testing -p 8080:5173 ${{ secrets.DOCKER_USERNAME }}/vite-testing:latest
           EOF

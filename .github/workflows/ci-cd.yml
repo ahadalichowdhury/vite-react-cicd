@@ -3,40 +3,40 @@ name: CI/CD with Docker Push & EC2 Pull
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Log in to Docker Hub
-      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-    - name: Build and push Docker image
-      run: |
-        IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/vite-react:latest
-        docker build -t $IMAGE_NAME .
-        docker push $IMAGE_NAME
+      - name: Build and push Docker image
+        run: |
+          IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/vite-react:latest
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
 
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
 
     steps:
-    - name: Copy SSH Key
-      run: |
-        echo "${{ secrets.EC2_KEY }}" > key.pem
-        chmod 400 key.pem
+      - name: Copy SSH Key
+        run: |
+          echo "${{ secrets.EC2_KEY }}" > key.pem
+          chmod 400 key.pem
 
-    - name: Deploy to EC2 (Pull Image & Run)
-      run: |
-        ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-          docker pull ${{ secrets.DOCKER_USERNAME }}/vite-react:latest
-          docker stop vite-react || true
-          docker rm vite-react || true
-          docker run -d --name vite-react -p 80:5173 ${{ secrets.DOCKER_USERNAME }}/vite-react:latest
-        EOF
+      - name: Deploy to EC2 (Pull Image & Run)
+        run: |
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            docker pull ${{ secrets.DOCKER_USERNAME }}/vite-react:latest
+            docker stop vite-react || true
+            docker rm vite-react || true
+            docker run -d --name vite-react -p 80:5173 ${{ secrets.DOCKER_USERNAME }}/vite-react:latest
+          EOF

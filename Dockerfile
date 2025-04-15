@@ -26,4 +26,4 @@ COPY --from=build /app/dist /app/build
 EXPOSE 5173
 
 # Serve the build folder using `serve` on port 5173
-CMD ["serve", "-s", "build", "-l", "5173"]
+CMD ["serve", "-s", "build", "-l", "0.0.0.0:5173"]

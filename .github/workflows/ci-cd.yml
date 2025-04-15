@@ -38,5 +38,5 @@ jobs:
           docker pull ${{ secrets.DOCKER_USERNAME }}/vite-react:latest
           docker stop vite-react || true
           docker rm vite-react || true
-          docker run -d --name vite-react -p 80:3000 ${{ secrets.DOCKER_USERNAME }}/vite-react:latest
+          docker run -d --name vite-react -p 80:5173 ${{ secrets.DOCKER_USERNAME }}/vite-react:latest
         EOF
